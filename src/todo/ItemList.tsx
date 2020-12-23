@@ -17,23 +17,32 @@ import {
   IonSearchbar,
   IonInfiniteScroll,
   IonInfiniteScrollContent,
-  useIonViewWillEnter
+  useIonViewWillEnter,
+  IonLabel,
+  IonItemDivider
 } from '@ionic/react';
-import { add, logOut, wifi } from 'ionicons/icons';
+import { add, logOut, wifi, cloudUploadOutline } from 'ionicons/icons';
 import Item from './Item';
 import { getLogger } from '../core';
 import { ItemContext } from './ItemProvider';
 import {AuthContext} from "../auth";
 import { ItemProps } from './ItemProps';
 import {useNetwork} from '../core';
+import { useBackgroundTask } from '../core/useBackgroundTask';
+import { Plugins } from '@capacitor/core';
+import { useAppState } from '../core/useAppState';
+import { getDate } from './ItemLocalStorage';
 
 const log = getLogger('ItemList');
 
+const { BackgroundTask } = Plugins;
+
 const ItemList: React.FC<RouteComponentProps> = ({ history }) => {
   const { networkStatus } = useNetwork();
-  const { items, fetching, fetchingError } = useContext(ItemContext);
+  const { appState } = useAppState();
+  const { items, unsavedItems , fetching, fetchingError, saveItem } = useContext(ItemContext);
+  //const [ lastModified, setLastModified] = useState<string|null>(null);
   log('render');
-  console.log("intra", items?.length);
   
   //logout
   const { logout } = useContext(AuthContext);
@@ -48,7 +57,7 @@ const ItemList: React.FC<RouteComponentProps> = ({ history }) => {
   const [itemsShow, setItemsShow] = useState<ItemProps[]>([]); //elementele afisate
 
   function wait(){
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       setTimeout(() => {
         resolve();
       }, 1000);
@@ -75,6 +84,35 @@ const ItemList: React.FC<RouteComponentProps> = ({ history }) => {
     console.log("items "+position);
   }, [items]);
 
+  useEffect(()=>{
+    setDisableInfiniteScroll(false);
+    setPosition(4);
+  }, [networkStatus, items]);
+
+  const useBackgroundTask = (asyncTask: () => Promise<void>) => {
+     useEffect(() => {
+     let taskId = BackgroundTask.beforeExit(async () => {
+         console.log('useBackgroundTask - executeTask started');
+         if(!appState.isActive && networkStatus.connected && unsavedItems){
+           // daca suntem din nou online si avem Items neprocesate creeam un nou background task 
+           await asyncTask();
+         }
+         console.log('useBackgroundTask - executeTask finished');
+         BackgroundTask.finish({ taskId });
+       });
+     }, [networkStatus, appState])
+     return {};
+   };
+  
+  useBackgroundTask(() => new Promise(resolve => {
+    console.log('My Background Task'+ unsavedItems);
+    //apelam api pentru salvare elemente pe server
+    unsavedItems && unsavedItems.forEach(item => {
+      saveItem && saveItem(item);
+    });
+    resolve();
+  }));
+
   return (
     <IonPage>
       <IonHeader>
@@ -94,6 +132,24 @@ const ItemList: React.FC<RouteComponentProps> = ({ history }) => {
       </IonHeader>
       <IonContent>
         <IonLoading isOpen={fetching} message="Fetching items" />
+        {unsavedItems && (
+          <><IonItemDivider>
+            <IonLabel>
+                Items are not processed
+            </IonLabel>
+            </IonItemDivider>
+            <IonList>
+              {unsavedItems.map(({ _id, title, year, version, type }) => 
+              <> <IonIcon icon={cloudUploadOutline}/>
+                  <Item key={_id} _id={_id} title={title} year={year} type={type} version={version} onEdit={id => console.log(id)} /></>
+              )}
+            </IonList></>
+        )}
+        <IonItemDivider>
+          <IonLabel>
+            Movies
+          </IonLabel>
+        </IonItemDivider>
         {itemsShow && itemsShow.map((movie: ItemProps,  i: number) => {
           return (
               <Item
@@ -102,6 +158,7 @@ const ItemList: React.FC<RouteComponentProps> = ({ history }) => {
                   title={movie.title}
                   type={movie.type}
                   year={movie.year}
+                  version={movie.version}
 
                   onEdit={(id) => history.push(`/item/${id}`)}
                />

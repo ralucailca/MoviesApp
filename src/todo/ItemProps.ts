@@ -3,4 +3,5 @@ export interface ItemProps {
   title: string;
   year: string;
   type: string;
+  version?: number;
 }

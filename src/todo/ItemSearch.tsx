@@ -70,7 +70,7 @@ const ItemList: React.FC<RouteComponentProps> = ({ history }) => {
   }, [searchTitle]);
 
   function wait(){
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       setTimeout(() => {
         resolve();
       }, 1000);

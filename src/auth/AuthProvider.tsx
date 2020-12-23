@@ -121,6 +121,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         if (canceled) {
           return;
         }
+        
       
         log('authenticate failed');
         setState({

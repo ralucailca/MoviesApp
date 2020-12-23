@@ -1,5 +1,8 @@
+import { ItemProps } from '../todo/ItemProps';
+
 export {default as  useNetwork } from './useNetwork';
-export const baseUrl = 'localhost:3000';
+//export const baseUrl = 'localhost:3000';
+export const baseUrl = '192.168.0.129:3000';
 
 
 export const getLogger: (tag: string) => (...args: any) => void =
@@ -34,5 +37,13 @@ export const authConfig = (token?: string) => ({
   headers: {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
+  }
+});
+
+export const authOptimisedConfig = (token?: string, item?:ItemProps) => ({
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+    'ETag':`${item?.version}`,
   }
 });

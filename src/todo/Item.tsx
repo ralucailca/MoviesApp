@@ -1,13 +1,29 @@
-import React from 'react';
-import { IonItem, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonIcon} from '@ionic/react';
+import React, { useContext, useEffect, useState } from 'react';
+import { IonItem, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonIcon, IonButton} from '@ionic/react';
 import { ItemProps } from './ItemProps';
 import { videocam } from 'ionicons/icons';
+import { ItemContext } from './ItemProvider';
+import { alertCircle } from 'ionicons/icons';
 
 interface ItemPropsExt extends ItemProps {
   onEdit: (_id?: string) => void;
 }
 
-const Item: React.FC<ItemPropsExt> = ({ _id, title, year, type, onEdit }) => {
+const Item: React.FC<ItemPropsExt> = ({ _id, title, year, type, version, onEdit }) => {
+  const {getConflict, items} = useContext(ItemContext);
+  const [conflict, setConflict] = useState<boolean>(false);
+
+  useEffect(() => {
+    getConflict?.(_id!).then( (answ) => {
+      if(answ == null){
+        setConflict(false);
+      }
+      else{
+        setConflict(true);
+      }
+    });
+  }, [ getConflict, items]);
+
   return (
     <IonItem onClick={() => onEdit(_id)}>
       
@@ -19,7 +35,9 @@ const Item: React.FC<ItemPropsExt> = ({ _id, title, year, type, onEdit }) => {
           <IonCardContent>
             <strong> An: </strong> <em>{year}</em> 
             <strong> Gen: </strong> <em>{type}</em>
-          </IonCardContent>
+            <strong> Versiune: </strong> <em>{version}</em>
+            {conflict && <IonLabel style={{color: "red"}}>CONFLICT</IonLabel>} 
+          </IonCardContent>   
         </IonCard>
     </IonItem>
   );
