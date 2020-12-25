@@ -120,18 +120,19 @@ const ItemList: React.FC<RouteComponentProps> = ({ history }) => {
             value={searchTitle}
             debounce={1000}
             onIonChange={(e) => setSearchTitle(e.detail.value!)}
-        />  
-        {itemsShow && itemsShow.map((movie: ItemProps) => {
+        />
+        {itemsShow && itemsShow.map((movie: ItemProps,  i: number) => {
           return (
               <Item
-                  key={movie._id}
+                  key={`${i}`}
                   _id={movie._id}
                   title={movie.title}
                   type={movie.type}
                   year={movie.year}
-
+                  version={movie.version}
+                  photo={movie.photo}
                   onEdit={(id) => history.push(`/item/${id}`)}
-               />
+              />
           );
         })}
         <IonInfiniteScroll

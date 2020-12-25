@@ -12,12 +12,18 @@ import {
   IonToolbar,
   IonItemDivider,
   IonItem,
-  IonRow
+  IonFab,
+  IonFabButton,
+  IonIcon,
+  IonImg,
+  IonActionSheet,
 } from '@ionic/react';
 import { getLogger } from '../core';
 import { ItemContext } from './ItemProvider';
 import { RouteComponentProps } from 'react-router';
 import { ItemProps } from './ItemProps';
+import {usePhotoGallery} from "../core/usePhoto";
+import {camera, trash, close} from "ionicons/icons";
 
 const log = getLogger('ItemEdit');
 
@@ -33,6 +39,23 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
   const [item, setItem] = useState<ItemProps>();
   const [conflict, setConflict] = useState<boolean>(false);
   const [conflictItem, setConflictItem] = useState<ItemProps|null>(null);
+  const [photo, setPhoto] = useState<string | undefined>();
+  const { takePhoto, deletePhoto } = usePhotoGallery();
+  const [delPhoto, setDelPhoto] = useState<boolean>(false);
+
+  const handleTakePhoto = async() => {
+    const id = match.params.id;
+    const result = await takePhoto(id!);
+    setPhoto(result);
+    setDelPhoto(false);
+  }
+
+  const handleDeletePhoto = async() => {
+    const id = match.params.id;
+    await deletePhoto(photo!, id!);
+    setPhoto(undefined);
+    setDelPhoto(false);
+  }
   
   useEffect(() => {
     log('useEffect');
@@ -43,6 +66,7 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
       setTitle(item.title);
       setType(item.type);
       setYear(item.year);
+      setPhoto(item.photo);
     }
   }, [match.params.id, items]);
   
@@ -62,12 +86,12 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
   }, [getConflict]);
 
   const handleSave = () => {
-    const editedItem = item ? { ...item, title, year, type } : { title, year, type };
+    const editedItem = item ? { ...item, title, year, type, photo } : { title, year, type };
     saveItem && saveItem(editedItem).then(() => history.goBack());
   };
   
   const handleDelete = () => {
-    const editedItem = item ? { ...item, title, year, type } : { title, year, type };
+    const editedItem = item ? { ...item, title, year, type, photo } : { title, year, type };
     deleteItem && deleteItem(editedItem).then(() => history.goBack());
   };
 
@@ -113,6 +137,37 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
           <IonLabel><strong>Type:</strong></IonLabel>
           <IonInput value={type} onIonChange={e => setType(e.detail.value || '')} />
         </IonItem>
+        <IonItem>
+          {photo && <IonImg src={photo} style={{maxWidth: "200px", maxLength:"300px"}} onClick={()=>setDelPhoto(true)}/>}
+          {!photo && <IonLabel>Without photo</IonLabel>}
+        </IonItem>
+        <IonFab vertical="bottom" horizontal="center" slot="fixed">
+          <IonFabButton onClick={() => handleTakePhoto()}>
+            <IonIcon icon={camera}/>
+          </IonFabButton>
+        </IonFab>
+        <IonActionSheet
+            isOpen={!!photo && delPhoto}
+            buttons={[{
+              text: 'Delete',
+              role: 'destructive',
+              icon: trash,
+              handler: () => {
+                if (photo && delPhoto) {
+                  handleDeletePhoto();
+                }
+              }
+            }, {
+              text: 'Cancel',
+              icon: close,
+              role: 'cancel',
+              handler: () => {
+                setDelPhoto(false);
+              }
+            }]}
+            onDidDismiss={() => setDelPhoto(false)}
+        />
+
         {match.params.id && conflict &&
           <IonContent>
             <IonItemDivider>Solve the conflict</IonItemDivider>

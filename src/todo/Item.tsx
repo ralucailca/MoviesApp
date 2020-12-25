@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { IonItem, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonIcon, IonButton} from '@ionic/react';
+import { IonImg, IonItem, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonIcon, IonButton} from '@ionic/react';
 import { ItemProps } from './ItemProps';
 import { videocam } from 'ionicons/icons';
 import { ItemContext } from './ItemProvider';
@@ -8,8 +8,8 @@ import { alertCircle } from 'ionicons/icons';
 interface ItemPropsExt extends ItemProps {
   onEdit: (_id?: string) => void;
 }
-
-const Item: React.FC<ItemPropsExt> = ({ _id, title, year, type, version, onEdit }) => {
+//"data:image/jpeg;base64,"+photo
+const Item: React.FC<ItemPropsExt> = ({ _id, title, year, type, version, photo, onEdit }) => {
   const {getConflict, items} = useContext(ItemContext);
   const [conflict, setConflict] = useState<boolean>(false);
 
@@ -37,7 +37,8 @@ const Item: React.FC<ItemPropsExt> = ({ _id, title, year, type, version, onEdit 
             <strong> Gen: </strong> <em>{type}</em>
             <strong> Versiune: </strong> <em>{version}</em>
             {conflict && <IonLabel style={{color: "red"}}>CONFLICT</IonLabel>} 
-          </IonCardContent>   
+          </IonCardContent>
+          {photo && <IonImg src={photo} style={{maxWidth: "200px", maxLength:"300px"}}/>}
         </IonCard>
     </IonItem>
   );

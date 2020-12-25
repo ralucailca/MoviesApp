@@ -159,7 +159,7 @@ const ItemList: React.FC<RouteComponentProps> = ({ history }) => {
                   type={movie.type}
                   year={movie.year}
                   version={movie.version}
-
+                  photo={movie.photo}
                   onEdit={(id) => history.push(`/item/${id}`)}
                />
           );
