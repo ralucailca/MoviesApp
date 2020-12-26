@@ -3,6 +3,11 @@ import {CameraResultType, CameraSource, FilesystemDirectory} from '@capacitor/co
 import {useEffect} from 'react';
 import {base64FromPath, useFilesystem} from '@ionic/react-hooks/filesystem';
 
+export interface Photo {
+    filepath: string;
+    base64Data?: string;
+}
+
 export function usePhotoGallery() {
     const { getPhoto } = useCamera();
 
@@ -12,8 +17,8 @@ export function usePhotoGallery() {
             source: CameraSource.Camera,
             quality: 100
         });
-        const fileName = new Date().getTime() + '.jpeg';
-        //const fileName = id + '.jpeg';
+        //const fileName = new Date().getTime() + '.jpeg';
+        const fileName = id + '.jpeg';
         const base64Data = await base64FromPath(cameraPhoto.webPath!);
         return await savePicture(base64Data, fileName);
     };
