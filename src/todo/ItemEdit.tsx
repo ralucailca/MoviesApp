@@ -17,13 +17,16 @@ import {
   IonIcon,
   IonImg,
   IonActionSheet,
+  IonRow,
 } from '@ionic/react';
 import { getLogger } from '../core';
 import { ItemContext } from './ItemProvider';
 import { RouteComponentProps } from 'react-router';
 import { ItemProps } from './ItemProps';
 import {usePhotoGallery} from "../core/usePhoto";
-import {camera, trash, close} from "ionicons/icons";
+import {camera, trash, close, checkmarkCircleOutline} from "ionicons/icons";
+import {useMyLocation} from "../core/useMyLocation";
+import {MyMap} from "../core/MyMap";
 
 const log = getLogger('ItemEdit');
 
@@ -42,6 +45,12 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
   const [photo, setPhoto] = useState<string | undefined>();
   const { takePhoto, deletePhoto } = usePhotoGallery();
   const [delPhoto, setDelPhoto] = useState<boolean>(false);
+  const [latitude, setLatitude] = useState<number|undefined>();
+  const [longitude, setLongitude] = useState<number|undefined>();
+  const [newLatitude, setNewLatitude] = useState<number>();
+  const [newLongitude, setNewLongitude] = useState<number>();
+  const myLocation = useMyLocation();
+  const { latitude: lat, longitude: long } = myLocation.position?.coords || {};
 
   const handleTakePhoto = async() => {
     const id = match.params.id;
@@ -66,9 +75,27 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
       setTitle(item.title);
       setType(item.type);
       setYear(item.year);
+      setLatitude(item.latitude);
+      setLongitude(item.longitude);
       setPhoto(item.photo);
     }
   }, [match.params.id, items]);
+
+
+  function resetLatLong(){
+    //daca nu avem deja locatie setam locatia utilizatorului, altfel dam locatia filmului drept noua locatie
+    if(latitude == undefined || longitude == undefined){
+      setNewLatitude(lat);
+      setNewLongitude(long);
+    } else {
+      setNewLatitude(latitude);
+      setNewLongitude(longitude);
+    }
+  }
+
+  useEffect(()=>{
+    resetLatLong();
+  },[lat, long, latitude, longitude]);
   
   useEffect(()=>{
     const id = match.params.id;
@@ -86,12 +113,12 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
   }, [getConflict]);
 
   const handleSave = () => {
-    const editedItem = item ? { ...item, title, year, type, photo } : { title, year, type };
+    const editedItem = item ? { ...item, title, year, type, photo, latitude, longitude } : { title, year, type, latitude, longitude };
     saveItem && saveItem(editedItem).then(() => history.goBack());
   };
   
   const handleDelete = () => {
-    const editedItem = item ? { ...item, title, year, type, photo } : { title, year, type };
+    const editedItem = item ? { ...item, title, year, type, photo, latitude, longitude } : { title, year, type, latitude, longitude };
     deleteItem && deleteItem(editedItem).then(() => history.goBack());
   };
 
@@ -104,6 +131,14 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
     const id=match.params.id;
     removeChanges && removeChanges(id!).then(() => history.goBack());
   };
+
+  function moveLocation(source: string) {
+    return (e: any) => {
+      setNewLatitude(e.latLng.lat());
+      setNewLongitude(e.latLng.lng());
+      console.log(source, e.latLng.lat(), e.latLng.lng());
+    }
+  }
 
   log('render');
   return (
@@ -168,6 +203,40 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
             onDidDismiss={() => setDelPhoto(false)}
         />
 
+        {
+          (!latitude || !longitude) &&
+            <IonItem>
+              <IonLabel>You are here. Choose the place where the movie is shot.</IonLabel>
+            </IonItem>
+        }
+
+        {
+          (latitude && longitude) &&
+          <IonItem>
+            <IonLabel>The movie is shot here.</IonLabel>
+          </IonItem>
+        }
+
+        {
+          newLatitude && newLongitude &&
+              <MyMap
+                  markerTitle = {title}
+                  lat = {newLatitude}
+                  lng = {newLongitude}
+                  onMapClick = {moveLocation('onMap')}
+                  onMarkerClick = {moveLocation('onMarker')}
+              />
+        }
+
+        <IonButton onClick={()=> {setLatitude(newLatitude); setLongitude(newLongitude); console.log(latitude+" "+longitude);}} color={"secondary"}>
+          <IonIcon icon={checkmarkCircleOutline}/>
+        </IonButton>
+        <IonButton onClick={()=> {resetLatLong();}} color={"secondary"}>
+          <IonIcon icon={close}/>
+        </IonButton>
+
+        <IonRow style={{height: "100px"}}></IonRow>
+
         {match.params.id && conflict &&
           <IonContent>
             <IonItemDivider>Solve the conflict</IonItemDivider>
@@ -196,6 +265,9 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
                 Remove my changes
               </IonButton>
           </IonContent>}
+
+        <IonRow style={{height: "100px"}}></IonRow>
+
         <IonLoading isOpen={saving} />
         {savingError && (
           <div>{savingError.message || 'Failed to save item'}</div>

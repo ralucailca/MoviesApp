@@ -5,4 +5,6 @@ export interface ItemProps {
   type: string;
   version?: number;
   photo?: string;
+  latitude?: number,
+  longitude?: number,
 }
