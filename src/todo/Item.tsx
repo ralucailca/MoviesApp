@@ -38,7 +38,7 @@ const Item: React.FC<ItemPropsExt> = ({ _id, title, year, type, version, photo, 
             <strong> Versiune: </strong> <em>{version}</em>
             {conflict && <IonLabel style={{color: "red"}}>CONFLICT</IonLabel>} 
           </IonCardContent>
-          {photo && <IonImg src={photo} style={{maxWidth: "200px", maxLength:"300px"}}/>}
+          {photo && photo.base64Data && <IonImg src={photo.base64Data} style={{maxWidth: "200px", maxLength:"300px"}}/>}
         </IonCard>
     </IonItem>
   );

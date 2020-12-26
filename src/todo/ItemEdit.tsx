@@ -23,7 +23,7 @@ import { getLogger } from '../core';
 import { ItemContext } from './ItemProvider';
 import { RouteComponentProps } from 'react-router';
 import { ItemProps } from './ItemProps';
-import {usePhotoGallery} from "../core/usePhoto";
+import {usePhotoGallery, Photo} from "../core/usePhoto";
 import {camera, trash, close, checkmarkCircleOutline} from "ionicons/icons";
 import {useMyLocation} from "../core/useMyLocation";
 import {MyMap} from "../core/MyMap";
@@ -42,7 +42,7 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
   const [item, setItem] = useState<ItemProps>();
   const [conflict, setConflict] = useState<boolean>(false);
   const [conflictItem, setConflictItem] = useState<ItemProps|null>(null);
-  const [photo, setPhoto] = useState<string | undefined>();
+  const [photo, setPhoto] = useState<Photo | undefined>();
   const { takePhoto, deletePhoto } = usePhotoGallery();
   const [delPhoto, setDelPhoto] = useState<boolean>(false);
   const [latitude, setLatitude] = useState<number|undefined>();
@@ -54,14 +54,14 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
 
   const handleTakePhoto = async() => {
     const id = match.params.id;
-    const result = await takePhoto(id!);
+    const result = await takePhoto();
     setPhoto(result);
     setDelPhoto(false);
   }
 
   const handleDeletePhoto = async() => {
     const id = match.params.id;
-    await deletePhoto(photo!, id!);
+    await deletePhoto(photo!);
     setPhoto(undefined);
     setDelPhoto(false);
   }
@@ -113,7 +113,7 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
   }, [getConflict]);
 
   const handleSave = () => {
-    const editedItem = item ? { ...item, title, year, type, photo, latitude, longitude } : { title, year, type, latitude, longitude };
+    const editedItem = item ? { ...item, title, year, type, photo, latitude, longitude } : { title, year, type, photo, latitude, longitude };
     saveItem && saveItem(editedItem).then(() => history.goBack());
   };
   
@@ -173,8 +173,8 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
           <IonInput value={type} onIonChange={e => setType(e.detail.value || '')} />
         </IonItem>
         <IonItem>
-          {photo && <IonImg src={photo} style={{maxWidth: "200px", maxLength:"300px"}} onClick={()=>setDelPhoto(true)}/>}
-          {!photo && <IonLabel>Without photo</IonLabel>}
+          {photo && photo.base64Data && <IonImg src={photo.base64Data} style={{maxWidth: "200px", maxLength:"300px"}} onClick={()=>setDelPhoto(true)}/>}
+          {(!photo || !photo.base64Data) && <IonLabel>Without photo</IonLabel>}
         </IonItem>
         <IonFab vertical="bottom" horizontal="center" slot="fixed">
           <IonFabButton onClick={() => handleTakePhoto()}>

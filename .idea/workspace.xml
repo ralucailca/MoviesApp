@@ -4,6 +4,9 @@
     <list default="true" id="d0759b36-0949-497a-850d-802d546ec7a8" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/core/usePhoto.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/usePhoto.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todo/Item.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/todo/Item.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todo/ItemEdit.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/todo/ItemEdit.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todo/ItemProps.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/todo/ItemProps.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,7 +46,7 @@
       <updated>1608716580860</updated>
       <workItem from="1608716583488" duration="10952000" />
       <workItem from="1608769551042" duration="3477000" />
-      <workItem from="1608895211655" duration="12328000" />
+      <workItem from="1608895211655" duration="16355000" />
     </task>
     <servers />
   </component>
