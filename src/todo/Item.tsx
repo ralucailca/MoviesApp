@@ -4,6 +4,7 @@ import { ItemProps } from './ItemProps';
 import { videocam } from 'ionicons/icons';
 import { ItemContext } from './ItemProvider';
 import { alertCircle } from 'ionicons/icons';
+import {basicPhotoAnimation} from "../core/animation";
 
 interface ItemPropsExt extends ItemProps {
   onEdit: (_id?: string) => void;
@@ -24,13 +25,24 @@ const Item: React.FC<ItemPropsExt> = ({ _id, title, year, type, version, photo, 
     });
   }, [ getConflict, items]);
 
+  //useEffect(titleAnimation,[items]);
+
+  function titleAnimation() {
+    const title = document.querySelector('.title');
+    if(title){
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const animation = basicPhotoAnimation(title);
+      animation.play();
+    }
+  }
+
   return (
     <IonItem onClick={() => onEdit(_id)}>
       
       <IonCard style={{width:"100%"}}>
           <IonCardHeader>
             <IonCardSubtitle>Movie    <IonIcon icon={videocam} /></IonCardSubtitle>
-            <IonCardTitle><strong>Titlu:</strong> <em>{title}</em></IonCardTitle>
+            <IonCardTitle><strong>Titlu:</strong><span className={'title'}> <em>{title}</em></span></IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
             <strong> An: </strong> <em>{year}</em> 

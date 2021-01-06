@@ -32,6 +32,7 @@ import { useBackgroundTask } from '../core/useBackgroundTask';
 import { Plugins } from '@capacitor/core';
 import { useAppState } from '../core/useAppState';
 import { getDate } from './ItemLocalStorage';
+import {basicPhotoAnimation} from "../core/animation";
 
 const log = getLogger('ItemList');
 
@@ -113,11 +114,22 @@ const ItemList: React.FC<RouteComponentProps> = ({ history }) => {
     resolve();
   }));
 
+  useEffect(titleAnimation,[items]);
+
+  function titleAnimation() {
+    const title = document.querySelector('.title');
+    if(title){
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const animation = basicPhotoAnimation(title);
+      animation.play();
+    }
+  }
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Movies App 
+          <IonTitle><span className={'title'}>Movies App </span>
             {
               networkStatus.connected && <IonIcon icon={wifi} style={{color:"green"}} /> 
                                       || <IonIcon icon={wifi} style={{color:"red"}} />

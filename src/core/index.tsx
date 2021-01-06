@@ -2,7 +2,7 @@ import { ItemProps } from '../todo/ItemProps';
 
 export {default as  useNetwork } from './useNetwork';
 //export const baseUrl = 'localhost:3000';
-export const baseUrl = '192.168.0.129:3000';
+export const baseUrl = '192.168.0.105:3000';
 
 
 export const getLogger: (tag: string) => (...args: any) => void =

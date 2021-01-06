@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { createAnimation } from '@ionic/react';
 import {
   IonButton,
   IonButtons,
@@ -27,6 +28,7 @@ import {usePhotoGallery, Photo} from "../core/usePhoto";
 import {camera, trash, close, checkmarkCircleOutline} from "ionicons/icons";
 import {useMyLocation} from "../core/useMyLocation";
 import {MyMap} from "../core/MyMap";
+import {useShakeAnimation, useErrorAnimation, useRightAnimation, basicPhotoAnimation} from "../core/animation";
 
 const log = getLogger('ItemEdit');
 
@@ -51,6 +53,42 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
   const [newLongitude, setNewLongitude] = useState<number>();
   const myLocation = useMyLocation();
   const { latitude: lat, longitude: long } = myLocation.position?.coords || {};
+
+  useEffect(showPriorityAnimation,[]);
+
+  useEffect(photoAnimation,[]);
+
+  function photoAnimation() {
+    const photo = document.querySelector('.photo');
+    if(photo){
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const animation = basicPhotoAnimation(photo);
+      animation.play();
+    }
+  }
+
+  function showPriorityAnimation() {
+    const title = document.querySelector('.title');
+    const year = document.querySelector('.year');
+    const type = document.querySelector('.type');
+    if (title && year && type) {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const animationTitle = useShakeAnimation(title);
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const animationYear = useShakeAnimation(year);
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const animationType = useShakeAnimation(type);
+      // const parentAnimation = createAnimation()
+      //     .duration(10000)
+      //     .addAnimation([animationTitle, animationYear, animationType]);
+      // parentAnimation.play();
+      (async () => {
+        await animationTitle.play();
+        await animationYear.play();
+        await animationType.play();
+      })();
+    }
+  }
 
   const handleTakePhoto = async() => {
     const id = match.params.id;
@@ -112,9 +150,54 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
     });
   }, [getConflict]);
 
+  function checkForm() {
+    if(title !== '' && year !== '' && type !== ''){
+      return true;
+    }
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useErrorsAnimation();
+    return false;
+  }
+
+  const useErrorsAnimation= () =>{
+    var animationTitle = null;
+    var animationYear = null;
+    var animationType = null;
+    const titleEl = document.querySelector('.title');
+    const yearEl = document.querySelector('.year');
+    const typeEl = document.querySelector('.type');
+    if(title === '' && titleEl){
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      animationTitle = useErrorAnimation(titleEl);
+    } else if(titleEl) {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      animationTitle = useRightAnimation(titleEl);
+    }
+    if(year === '' && yearEl){
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      animationYear = useErrorAnimation(yearEl);
+    } else if(yearEl) {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      animationYear = useRightAnimation(yearEl);
+    }
+    if(type === '' && typeEl){
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      animationType = useErrorAnimation(typeEl);
+    } else if(typeEl) {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      animationType = useRightAnimation(typeEl);
+    }
+    const parentAnimation = createAnimation()
+        .duration(10000)
+        .addAnimation([animationTitle!!, animationYear!!, animationType!!]);
+    parentAnimation.play();
+  }
+
   const handleSave = () => {
     const editedItem = item ? { ...item, title, year, type, photo, latitude, longitude } : { title, year, type, photo, latitude, longitude };
-    saveItem && saveItem(editedItem).then(() => history.goBack());
+    if(checkForm()) {
+      saveItem && saveItem(editedItem).then(() => history.goBack());
+    }
   };
   
   const handleDelete = () => {
@@ -123,7 +206,7 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
   };
 
   const handleSaveChanges = () =>{
-    const id=match.params.id; 
+    const id=match.params.id;
     saveChanges && saveChanges(id!).then(() => history.goBack());
   };
 
@@ -161,20 +244,20 @@ const ItemEdit: React.FC<ItemEditProps> = ({ history, match }) => {
       <IonContent>
         <IonItemDivider>Complete the movie data</IonItemDivider>
         <IonItem>
-          <IonLabel><strong>Title:</strong></IonLabel>
+          <IonLabel><pre className={'title'} style={{width: '70px'}}><strong> Title:</strong></pre></IonLabel>
           <IonInput value={title} onIonChange={e => setTitle(e.detail.value || '')} />
         </IonItem>
         <IonItem>
-          <IonLabel><strong>Year:</strong></IonLabel>
+          <IonLabel><pre className={'year'} style={{width: '70px'}}><strong> Year:</strong></pre></IonLabel>
           <IonInput value={year} onIonChange={e => setYear(e.detail.value || '')} />
         </IonItem>
         <IonItem>
-          <IonLabel><strong>Type:</strong></IonLabel>
+          <IonLabel><pre className={'type'} style={{width: '70px'}}><strong> Type:</strong></pre></IonLabel>
           <IonInput value={type} onIonChange={e => setType(e.detail.value || '')} />
         </IonItem>
         <IonItem>
-          {photo && photo.base64Data && <IonImg src={photo.base64Data} style={{maxWidth: "200px", maxLength:"300px"}} onClick={()=>setDelPhoto(true)}/>}
-          {(!photo || !photo.base64Data) && <IonLabel>Without photo</IonLabel>}
+          {photo && photo.base64Data && <div className={'photo'}><IonImg  src={photo.base64Data} style={{maxWidth: "200px", maxLength:"300px"}} onClick={()=>setDelPhoto(true)}/> </div>}
+          {(!photo || !photo.base64Data) && <div className={'photo'}>Without photo</div>}
         </IonItem>
         <IonFab vertical="bottom" horizontal="center" slot="fixed">
           <IonFabButton onClick={() => handleTakePhoto()}>

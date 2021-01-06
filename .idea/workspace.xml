@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d0759b36-0949-497a-850d-802d546ec7a8" name="Default Changelist" comment="" />
+    <list default="true" id="d0759b36-0949-497a-850d-802d546ec7a8" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todo/Item.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/todo/Item.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todo/ItemEdit.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/todo/ItemEdit.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todo/ItemList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/todo/ItemList.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todo/ItemSearch.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/todo/ItemSearch.tsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -21,13 +30,16 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.standard" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.standard" value="project" />
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.standard" value="" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="ts.external.directory.path" value="C:\Users\raluc\IonicProjects\MoviesApp\node_modules\typescript\lib" />
+    <property name="ts.external.directory.path" value="C:\Users\Asus\IonicProjects\MoviesApp\node_modules\typescript\lib" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -41,6 +53,10 @@
       <workItem from="1608716583488" duration="10952000" />
       <workItem from="1608769551042" duration="3477000" />
       <workItem from="1608895211655" duration="16662000" />
+      <workItem from="1609607209326" duration="1699000" />
+      <workItem from="1609711364934" duration="10538000" />
+      <workItem from="1609759997567" duration="8818000" />
+      <workItem from="1609883013060" duration="1201000" />
     </task>
     <servers />
   </component>

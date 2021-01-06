@@ -23,6 +23,7 @@ import { getLogger } from '../core';
 import { ItemContext } from './ItemProvider';
 import {AuthContext} from "../auth";
 import { ItemProps } from './ItemProps';
+import {ItemModal} from "./ItemModal";
 
 const log = getLogger('ItemList');
 
@@ -103,6 +104,7 @@ const ItemList: React.FC<RouteComponentProps> = ({ history }) => {
       </IonHeader>
       <IonContent>
         <IonLoading isOpen={fetching} message="Fetching items" />
+        <ItemModal/>
         <IonSelect
             value={filter}
             placeholder="Select type"
