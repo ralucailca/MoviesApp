@@ -23,6 +23,7 @@ import { getLogger } from '../core';
 import { ItemContext } from './ItemProvider';
 import {AuthContext} from "../auth";
 import { ItemProps } from './ItemProps';
+import {ItemModal} from "./ItemModal";
 
 const log = getLogger('ItemList');
 
@@ -70,7 +71,7 @@ const ItemList: React.FC<RouteComponentProps> = ({ history }) => {
   }, [searchTitle]);
 
   function wait(){
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       setTimeout(() => {
         resolve();
       }, 1000);
@@ -103,6 +104,7 @@ const ItemList: React.FC<RouteComponentProps> = ({ history }) => {
       </IonHeader>
       <IonContent>
         <IonLoading isOpen={fetching} message="Fetching items" />
+        <ItemModal/>
         <IonSelect
             value={filter}
             placeholder="Select type"
@@ -120,18 +122,19 @@ const ItemList: React.FC<RouteComponentProps> = ({ history }) => {
             value={searchTitle}
             debounce={1000}
             onIonChange={(e) => setSearchTitle(e.detail.value!)}
-        />  
-        {itemsShow && itemsShow.map((movie: ItemProps) => {
+        />
+        {itemsShow && itemsShow.map((movie: ItemProps,  i: number) => {
           return (
               <Item
-                  key={movie._id}
+                  key={`${i}`}
                   _id={movie._id}
                   title={movie.title}
                   type={movie.type}
                   year={movie.year}
-
+                  version={movie.version}
+                  photo={movie.photo}
                   onEdit={(id) => history.push(`/item/${id}`)}
-               />
+              />
           );
         })}
         <IonInfiniteScroll

@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { authConfig, baseUrl, getLogger, withLogs } from '../core';
+import { authConfig, authOptimisedConfig, baseUrl, getLogger, withLogs } from '../core';
+import { getDate, setDate } from './ItemLocalStorage';
 import { ItemProps } from './ItemProps';
 
 const itemUrl = `http://${baseUrl}/api/item`;
@@ -13,7 +14,7 @@ export const createItem: (token: string, item: ItemProps) => Promise<ItemProps[]
 }
 
 export const updateItem: (token: string, item: ItemProps) => Promise<ItemProps[]> = (token, item) => {
-  return withLogs(axios.put(`${itemUrl}/${item._id}`, item, authConfig(token)), 'updateItem');
+  return withLogs(axios.put(`${itemUrl}/${item._id}`, item, authOptimisedConfig(token, item)), 'updateItem');
 }
 
 export const deleteItemApi: (token: string, item: ItemProps) => Promise<ItemProps[]> = (token, item) => {
